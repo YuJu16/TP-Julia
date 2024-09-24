@@ -2,6 +2,27 @@ package main
 
 import "fmt"
 
+func Ft_coin(coins []int, amt int) int {
+	var dp []int
+	for j := 0; j < amt+1; j++ {
+		dp = append(dp, j)
+	}
+	for i := 1; i <= amt; i++ {
+		dp[i] = amt + 1
+	}
+	for i := 1; i <= amt; i++ {
+		for _, c := range coins {
+			if i >= c {
+				dp[i] = min(dp[i], dp[i-c]+1)
+			}
+		}
+	}
+	if dp[amt] == amt+1 {
+		return -1
+	}
+	return dp[amt]
+}
+
 func Ft_missing(nums []int) int {
 	n := len(nums)
 	m := 67
@@ -16,6 +37,20 @@ func Ft_missing(nums []int) int {
 		m = n
 	}
 	return m
+}
+
+func Ft_non_overlap(intervals [][]int) int {
+	ov := 0
+	e := intervals[0][1]
+	for i := 1; i < len(intervals); i++ {
+		if intervals[i][0] < e {
+			ov++
+		} else {
+			e = intervals[i][1]
+		}
+	}
+
+	return ov
 }
 
 func Ft_profit(prices []int) int {
@@ -65,41 +100,6 @@ func Ft_max_substring(s string) int {
 	return len(u)
 }
 
-func Ft_coin(coins []int, amt int) int {
-	var dp []int
-	for j := 0; j < amt+1; j++ {
-		dp = append(dp, j)
-	}
-	for i := 1; i <= amt; i++ {
-		dp[i] = amt + 1
-	}
-	for i := 1; i <= amt; i++ {
-		for _, c := range coins {
-			if i >= c {
-				dp[i] = min(dp[i], dp[i-c]+1)
-			}
-		}
-	}
-	if dp[amt] == amt+1 {
-		return -1
-	}
-	return dp[amt]
-}
-
-func Ft_non_overlap(intervals [][]int) int {
-	ov := 0
-	e := intervals[0][1]
-	for i := 1; i < len(intervals); i++ {
-		if intervals[i][0] < e {
-			ov++
-		} else {
-			e = intervals[i][1]
-		}
-	}
-
-	return ov
-}
-
 func Ft_min_window(s string, t string) string {
 	n := len(s)
 	minL := n
@@ -108,7 +108,7 @@ func Ft_min_window(s string, t string) string {
 	for i := 0; i < n; i++ {
 		for j := i; j < n; j++ {
 			sub := s[i : j+1]
-			if ca(sub, t) {
+			if verif(sub, t) {
 				if len(sub) < minL {
 					minL = len(sub)
 					res = sub
@@ -144,9 +144,22 @@ func min(a, b int) int {
 }
 
 func main() {
+
+	fmt.Println(Ft_coin([]int{1, 2, 5}, 11)) // resultat : 3 car (11 == 5 + 5 + 1)
+	fmt.Println(Ft_coin([]int{2}, 3))        // resultat : -1
+	fmt.Println(Ft_coin([]int{1}, 0))        // resultat : 0
+	fmt.Print("\n")
+
 	fmt.Println(Ft_missing([]int{3, 1, 2}))                   // resultat : 0
 	fmt.Println(Ft_missing([]int{0, 1}))                      // resultat : 2
 	fmt.Println(Ft_missing([]int{9, 6, 4, 2, 3, 5, 7, 0, 1})) // resultat : 8
+	fmt.Print("\n")
+
+	fmt.Println(Ft_non_overlap([][]int{{1, 2}, {2, 3}, {3, 4}, {1, 3}})) // resultat : 1
+	// pour que les intervalles soient tous des intervalles qui ne se superpose pas,
+	// il suffit de d'enlever qu'un seul intervalle, [1,3]
+	fmt.Println(Ft_non_overlap([][]int{{1, 2}, {2, 3}}))         // resultat : 0
+	fmt.Println(Ft_non_overlap([][]int{{1, 2}, {1, 2}, {1, 2}})) // resultat : 2
 	fmt.Print("\n")
 
 	fmt.Println(Ft_profit([]int{7, 1, 5, 3, 6, 4})) // resultat : 5
@@ -159,18 +172,6 @@ func main() {
 	// "abc" est la plus grande sous chaine composé de caractère diffèrent
 	fmt.Println(Ft_max_substring("bbbbb")) // resultat : 1
 	// "b" est la plus grande sous chaine
-	fmt.Print("\n")
-
-	fmt.Println(Ft_coin([]int{1, 2, 5}, 11)) // resultat : 3 car (11 == 5 + 5 + 1)
-	fmt.Println(Ft_coin([]int{2}, 3))        // resultat : -1
-	fmt.Println(Ft_coin([]int{1}, 0))        // resultat : 0
-	fmt.Print("\n")
-
-	fmt.Println(Ft_non_overlap([][]int{{1, 2}, {2, 3}, {3, 4}, {1, 3}})) // resultat : 1
-	// pour que les intervalles soient tous des intervalles qui ne se superpose pas,
-	// il suffit de d'enlever qu'un seul intervalle, [1,3]
-	fmt.Println(Ft_non_overlap([][]int{{1, 2}, {2, 3}}))         // resultat : 0
-	fmt.Println(Ft_non_overlap([][]int{{1, 2}, {1, 2}, {1, 2}})) // resultat : 2
 	fmt.Print("\n")
 
 	fmt.Println(Ft_min_window("ADOBECODEBANC", "ABC")) // resultat : "BANC"
